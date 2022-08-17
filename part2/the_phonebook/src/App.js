@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import personsService from './services/personsService';
 import ContactInfo from './componenets/ContactInfo';
 import { PersonForm, SearchForm } from './componenets/Forms'
+import Notification from './componenets/Notifcation'
 
 
 const App = (props) => {
@@ -10,6 +11,8 @@ const App = (props) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [Searchfilter, setNewFilter] = useState('')
+  const [notifcationMessage, setnotifcationMessage] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     console.log('effect');
@@ -27,19 +30,29 @@ const App = (props) => {
       persons
 
 
-
+  const changeNumberPrompt = () => {
+    const duplicatePerson = persons.find(p => p.name === newName);
+    if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+      const updatedNumber = { ...duplicatePerson, number: newNumber }
+      personsService.update(duplicatePerson.id, updatedNumber)
+        .then(updatedPerson => setPersons(persons.map(person => person.id !== duplicatePerson.id ? person : updatedPerson)))
+        .catch(error => {
+          setErrorMsg(`Information of ${newName} has already been deleted from the server`)
+          const changedPersons = persons.filter(p => p.name !== newName)
+          setPersons(changedPersons);
+          setTimeout(() => {
+            setErrorMsg(null);
+          }, 5000);
+        })
+    }
+    setNewName("")
+    setNewNumber("")
+  }
+  
   const addPerson = (event) => {
     event.preventDefault()
- 
     if (persons.some(p => p.name === newName)) {
-      const duplicatePerson = persons.find(p => p.name === newName);
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        const updatedNumber = { ...duplicatePerson, number: newNumber }
-        personsService.update(duplicatePerson.id, updatedNumber)
-          .then(updatedPerson => setPersons(persons.map(person => person.id !== duplicatePerson.id ? person : updatedPerson)))
-      }
-      setNewName("")
-      setNewNumber("")
+      changeNumberPrompt();
     } else {
       const uniqueId = () => {
         const id = persons.length + 1;
@@ -63,6 +76,10 @@ const App = (props) => {
           setPersons(persons.concat(returnedPerson))
           setNewName("")
           setNewNumber("")
+          setnotifcationMessage(`Added ${newPerson.name}`)
+          setTimeout(() => {
+            setnotifcationMessage(null);
+          }, 5000);
         })
 
     }
@@ -74,10 +91,13 @@ const App = (props) => {
       const changedPersons = persons.filter(p => p.id !== id)
 
       personsService.deleteRequest(id)
-        .then(setPersons(changedPersons));
+        .then(setPersons(changedPersons))
+        .catch(error => {
+          alert(`${person.name} was already deleted from the server.`)
+          console.log(`${person.name} doesn't exist on the server.`)
+        })
     }
   }
-
 
   const nameContent = (event) => {
     setNewName(event.target.value)
@@ -94,6 +114,8 @@ const App = (props) => {
   return (
     <>
       <h2>Ponebook</h2>
+      <Notification message={errorMsg} error={true}/>
+      <Notification message={notifcationMessage} error={false}/>
       <SearchForm val={Searchfilter} onChng={filterContent} />
       <h2>add new</h2>
       <PersonForm
