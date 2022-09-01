@@ -54,10 +54,15 @@ blogsRouter.delete('/:id', async (request, response) => {
   if (!request.user) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
-
   const user = await request.user
 
-  const blogOwner = user.blogs.map(b => b.toString()).some(b => b === request.params.id)
+  const blog = await Blog.findById(request.params.id)
+  blog === null
+
+
+
+  const blogOwner = blog.user.toString() === user._id.toString()
+
   if (!blogOwner) {
     return response.status(401).json({ error: 'you do not own this blog' })
   }
@@ -65,7 +70,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndRemove(request.params.id)
 
 
-  user.blogs = user.blogs.filter(b => b.toString() !== request.params.id) 
+  user.blogs = user.blogs.filter(b => b.toString() !== request.params.id)
   await user.save()
 
   response.status(204).end()

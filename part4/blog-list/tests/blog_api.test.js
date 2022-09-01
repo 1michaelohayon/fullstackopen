@@ -32,13 +32,13 @@ describe(`get and retrival tests`, () => {
     expect(response.body[0].id).toBeDefined()
   })
 
-})
+}, 100000)
 describe('post/delete tests', () => {
   beforeEach(async () => {
     await User.deleteMany({})
     token = await helper.logInToken(api) // creates new user, login, then returns his token
     HeaderToken = { 'Authorization': `bearer ${token}`, Accept: 'application/json' }
-  })
+  }, 100000)
 
   test('HTTP POST request to the /api/blogs url successfully', async () => {
     const newBlog = {
@@ -60,6 +60,26 @@ describe('post/delete tests', () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
     const titles = blogsAtEnd.map(b => b.title)
     expect(titles).toContain("haha what")
+  })
+  test('401 error when posting with missing/invalid token', async () => {
+    const newBlog = {
+      title: "haha what",
+      author: "bestOne",
+      url: "funnyquestion",
+      likes: 14
+    }
+
+
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.error).toBe('token is missing or invalid')
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    
   })
 
   test('verifies that if the like property is missing, it will default to 0', async () => {
@@ -98,13 +118,29 @@ describe('post/delete tests', () => {
   test('a blog can be deleted and responds 204 if id is valid', async () => {
     await Blog.deleteMany({})
     const decodedToken = jwt.verify(token, process.env.SECRET)
-    const user = await User.findById(decodedToken.id)
-    helper.initialBlogs.forEach(b => {
-      b.user = user
-    })
-    const blogObjects = helper.initialBlogs
-      .map(blog => new Blog(blog))
+    const blogs = helper.initialBlogs.map(blog => ({ ...blog, user: decodedToken.id }))
+    const blogObjects = blogs.map(blog => new Blog(blog))
+    const promisedArray = blogObjects.map(blog => blog.save())
+    await Promise.all(promisedArray)
 
+
+    const blogsAtStart = await helper.blogsInDb()
+    const firstBlog = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${firstBlog.id}`)
+      .set(HeaderToken)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+  })
+  test('can not delete other users blogs and errors 201 "you do not own this blog"', async () => {
+    const wrongId = '1310ac23b0f5f911115e77dc'
+
+    await Blog.deleteMany({})
+    const blogs = helper.initialBlogs.map(blog => ({ ...blog, user: wrongId }))
+    const blogObjects = blogs.map(blog => new Blog(blog))
     const promisedArray = blogObjects.map(blog => blog.save())
     await Promise.all(promisedArray)
 
@@ -115,19 +151,13 @@ describe('post/delete tests', () => {
     const response = await api
       .delete(`/api/blogs/${firstBlog.id}`)
       .set(HeaderToken)
-    //   .expect(204)
-    console.log("\n ============================================================")
-    console.log('user:', user)
-    console.log("decoded:", decodedToken.id)
-    console.log(HeaderToken)
-    console.log('token:', token)
-    console.log(response.body.error)
-    console.log('firstblog', firstBlog)
-    console.log("\n ============================================================")
+      .expect(401)
+
+    expect(response.body.error).toBe('you do not own this blog')
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
   })
-})
+}, 100000)
 describe('HTTP put tests', () => {
   test('can update entire blog', async () => {
     const blogsAtStart = await helper.blogsInDb()
@@ -198,8 +228,6 @@ describe('HTTP put tests', () => {
     expect(changedBlog.pizza).toBe(undefined)
   })
 }, 100000)
-
-
 describe('users tests', () => {
   beforeEach(async () => {
     await User.deleteMany({})
@@ -344,7 +372,8 @@ describe('users tests', () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
 
   })
-})
+}, 100000)
+
 afterAll(() => {
   mongoose.connection.close()
 })
