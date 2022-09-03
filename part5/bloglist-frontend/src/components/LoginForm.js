@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react"
 import loginService from "../services/login"
 import blogsService from "../services/blogs"
-import Notifcation from "./Notification"
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = ({ setUser, setErMsg }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     const loggedUnderJSON = window.localStorage.getItem('loggedBlogListUser')
@@ -31,9 +29,9 @@ const LoginForm = ({ setUser }) => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong username or password')
+      setErMsg('wrong username or password')
       console.log(exception.message)
-      setTimeout(() => { setErrorMessage(null) }, 5000)
+      setTimeout(() => { setErMsg(null) }, 5000)
     }
 
   }
@@ -41,8 +39,6 @@ const LoginForm = ({ setUser }) => {
 
   return (
     <form onSubmit={handleLogIn}>
-      <h2>log in to application</h2>
-      <Notifcation message={errorMessage} error={true} />
       <div>
         username
         <input type="text" value={username} name="Username"

@@ -1,14 +1,11 @@
 import { useState } from "react"
-import Notifcation from "./Notification"
 import blogsService from "../services/blogs"
 
 
-const BlogForm = ({ blogs, setBlogs }) => {
+const BlogForm = ({ blogs, setBlogs, setErMsg, setErMod }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [notiMessage, setNotiMessage] = useState(null)
-  const [error, setError] = useState(false)
 
 
   const creteBlog = async (event) => {
@@ -29,16 +26,16 @@ const BlogForm = ({ blogs, setBlogs }) => {
       setAuthor('')
       setUrl('')
 
-      setError(false)
-      setNotiMessage(`a new blog ${title} by ${author} added`)
-      setTimeout(() => { setNotiMessage(null) }, 5000)
+      setErMod(false)
+      setErMsg(`a new blog ${title} by ${author} added`)
+      setTimeout(() => { setErMsg(null) }, 5000)
 
     } catch (exception) {
       console.log(exception)
 
-      setError(true)
-      setNotiMessage(`missing input`)
-      setTimeout(() => { setNotiMessage(null) }, 5000)
+      setErMod(true)
+      setErMsg(`missing input`)
+      setTimeout(() => { setErMsg(null) }, 5000)
 
     }
 
@@ -46,7 +43,6 @@ const BlogForm = ({ blogs, setBlogs }) => {
 
   return (
     <div>
-      <Notifcation message={notiMessage} error={error} />
       <form onSubmit={creteBlog}>
         <div>
           title
