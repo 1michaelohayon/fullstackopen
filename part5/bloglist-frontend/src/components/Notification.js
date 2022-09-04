@@ -1,4 +1,7 @@
 const Notifcation = ({ message, error }) => {
+
+
+
     const notifcationStyle = {
         color: 'green',
         background: 'lightGrey',
@@ -8,7 +11,7 @@ const Notifcation = ({ message, error }) => {
         padding: 10,
         marginBottom: 10,
     }
-    if (error){
+    if (error) {
         notifcationStyle.color = 'red'
     }
 
@@ -20,5 +23,7 @@ const Notifcation = ({ message, error }) => {
             {message}
         </div>
     )
+
+
 }
 export default Notifcation

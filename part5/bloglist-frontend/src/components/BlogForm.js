@@ -1,44 +1,23 @@
 import { useState } from "react"
-import blogsService from "../services/blogs"
 
 
-const BlogForm = ({ blogs, setBlogs, setErMsg, setErMod }) => {
+const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
 
-  const creteBlog = async (event) => {
+  const creteBlog = (event) => {
     event.preventDefault()
     console.log(title, author, url)
-
-    try {
-      const newBlog = {
-        title,
-        author,
-        url,
-      }
-      const response = await blogsService
-        .create(newBlog)
-
-      setBlogs(blogs.concat(response))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-      setErMod(false)
-      setErMsg(`a new blog ${title} by ${author} added`)
-      setTimeout(() => { setErMsg(null) }, 5000)
-
-    } catch (exception) {
-      console.log(exception)
-
-      setErMod(true)
-      setErMsg(`missing input`)
-      setTimeout(() => { setErMsg(null) }, 5000)
-
-    }
-
+    createBlog({
+      title,
+      author,
+      url,
+    })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
