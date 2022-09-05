@@ -10,12 +10,13 @@ const BlogList = ({ blogs, setBlogs, setErMsg, setErMod }) => {
   }, [])
 
 
-  const likeBtn = async blog => {
+  const likeBtn = async (blog) => {
+    const addedLike = {...blog, likes: blog.likes + 1}
     try {
       const response = await blogsService
-        .update(blog)
+        .update(addedLike)
       const updatedBlogs = blogs.map(b => b.id === response.id
-        ? Object.assign(b => b.id === response.id, response)
+        ? Object.assign(b => b.id === response.id, addedLike)
         : b)
 
       setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
@@ -29,11 +30,12 @@ const BlogList = ({ blogs, setBlogs, setErMsg, setErMod }) => {
     setTimeout(() => { setErMsg(null) }, 5000)
   }
   const removeBtn = async blog => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)){
       await blogsService
         .remove(blog)
       const updatedBlogs = blogs.filter(b => b.id !== blog.id)
       setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
-   
+    }
   }
 
   return (
@@ -41,7 +43,7 @@ const BlogList = ({ blogs, setBlogs, setErMsg, setErMod }) => {
     <div>
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBtn={likeBtn} removeBtn={removeBtn} />
+        <Blog key={blog.id} blog={blog} likeBtn={() => likeBtn(blog)} removeBtn={() => removeBtn(blog)} />
       )}
     </div>
   )

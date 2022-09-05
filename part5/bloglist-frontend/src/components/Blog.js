@@ -2,8 +2,7 @@ import { useState } from "react"
 
 
 const Blog = ({ blog, likeBtn, removeBtn }) => {
-  const [visible, setVisible] = useState('false')
-
+  const [content, setContent] = useState('false')
 
   const blogSyle = {
     paddingTop: 10,
@@ -13,36 +12,28 @@ const Blog = ({ blog, likeBtn, removeBtn }) => {
     marginBottom: 5
 
   }
-
-
   
-  const addLike = () => {
-    likeBtn({
-      user: blog.user,
-      likes: blog.likes + 1,
-      auhtor: blog.auhtor,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
-    })
- 
+
+  const blogContent = () => {
+    if (!content){
+      return (
+    <div >       
+      {blog.url} <br />
+      likes {blog.likes} <button onClick={likeBtn}>like</button> <br/>
+      {blog.user.name} <br />
+      <button onClick={removeBtn}>remove</button>
+    </div>
+      )
+    }
   }
 
-
-  const toggle = () => setVisible(!visible)
+  const toggle = () => setContent(!content)
 
   return (
-    <>
-      {visible === false
-        ? <div style={blogSyle}>
-          <div>{blog.title} <button onClick={toggle}>hide</button></div>
-          {blog.url} <br />
-          likes {blog.likes} <button onClick={addLike}>like</button><br />
-          {blog.author}
-          <button onClick={() => removeBtn(blog)}>remove</button>
-        </div>
-        : <div style={blogSyle}>{blog.title} <button onClick={toggle}>view</button></div>}
-    </>
+    <div className="blog" style={blogSyle}>
+      <div >{blog.title} {blog.author} <button onClick={toggle}>{content ? 'view' : 'hide'}</button></div>
+      {blogContent()}
+    </div>
   )
 }
 export default Blog
