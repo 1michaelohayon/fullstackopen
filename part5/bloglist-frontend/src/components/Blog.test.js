@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render, screen } from "@testing-library/react";
-import Blog from "./Blog";
+import { render, screen } from '@testing-library/react'
+import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
 
 describe('<Blog />', () => {
@@ -34,7 +34,7 @@ describe('<Blog />', () => {
 
   })
 
-  test("blog's content shows when the view button is clicked", async () => {
+  test('blog\'s content shows when the view button is clicked', async () => {
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
     await user.click(viewButton)
@@ -48,25 +48,25 @@ describe('<Blog />', () => {
   })
 
   test('like button', async () => {
-  
+
 
     const user = userEvent.setup()
     const viewButton = screen.getByText('view')
     await user.click(viewButton)
 
     const likeButton = screen.getByText('like')
-    
+
     await user.click(likeButton)
     await user.click(likeButton)
     expect(mockHandler.mock.calls).toHaveLength(2)
 
-  
-
-     
-    
 
 
-    
+
+
+
+
+
 
   })
 
