@@ -16,7 +16,7 @@ const asObject = (anecdote) => {
 }
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const anecdoteReducer = (state = initialState, action) => {
   const sortLogic = (a, b) => b.votes - a.votes
 
   switch (action.type) {
@@ -52,4 +52,4 @@ export const newAnecdote = (input) => {
   }
 }
 
-export default reducer
+export default anecdoteReducer
