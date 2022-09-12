@@ -1,0 +1,55 @@
+{
+  "notes": [
+    {
+      "content": "custom-hooks are great",
+      "id": 1
+    },
+    {
+      "content": "the best featrure ever <3",
+      "id": 2
+    },
+    {
+      "content": "hey hey hey",
+      "id": 3
+    },
+    {
+      "content": "dolphin",
+      "id": 4
+    },
+    {
+      "content": "lion",
+      "id": 5
+    },
+    {
+      "content": "ibex",
+      "id": 6
+    }
+  ],
+  "persons": [
+    {
+      "name": "mluukkai",
+      "number": "040-5483923",
+      "id": 1
+    },
+    {
+      "name": "kaltsoon",
+      "number": "045-2323456",
+      "id": 2
+    },
+    {
+      "name": "lol",
+      "number": "101010101010101",
+      "id": 3
+    },
+    {
+      "name": "nicePhone number",
+      "number": "123456789",
+      "id": 4
+    },
+    {
+      "name": "rock",
+      "number": "1",
+      "id": 5
+    }
+  ]
+}

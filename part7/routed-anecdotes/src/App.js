@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useField } from './hooks'
+
 import {
   Routes,
   Route,
@@ -73,39 +75,46 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
-    })
+    }) 
   }
+  const reset = () => {
+  content.onChange('', true)
+  author.onChange('', true)
+  info.onChange('', true)
 
+
+  }
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input {...info} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button> <button type="button" onClick={reset}>reset</button>
       </form>
+ 
     </div>
   )
 
@@ -142,16 +151,16 @@ const App = () => {
 
 
   const addNew = (anecdote) => {
-    
+
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
     navigate('/')
-    
+
     setNotification(`a new anecdote ${anecdote.content} created!`)
     setTimeout(() => {
-    setNotification(null)
+      setNotification(null)
     }, '5000')
- 
+
   }
 
   const anecdoteById = (id) =>
