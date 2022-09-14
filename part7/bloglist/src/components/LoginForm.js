@@ -1,7 +1,7 @@
 import { useField } from '../hooks'
 import { useDispatch } from 'react-redux'
 import { logIn } from '../reducers/userReducer'
-
+import { Button, TextField, Paper } from '@mui/material'
 const LoginForm = () => {
   const dispatch = useDispatch()
   const username = useField('text')
@@ -16,15 +16,15 @@ const LoginForm = () => {
     <form onSubmit={handleLogIn}>
       <div>
         username
-        <input id="Username" {...username} />
+        <TextField id="Username" {...username} />
       </div>
       <div>
         password
-        <input id="Password" {...password} />
+        <TextField id="Password" {...password} />
       </div>
-      <button id="login-button" type="submit">
+      <Button variant="contained" id="login-button" type="submit">
         login
-      </button>
+      </Button>
     </form>
   )
 }

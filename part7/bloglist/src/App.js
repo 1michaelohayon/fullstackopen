@@ -3,25 +3,11 @@ import BlogList, { BlogView } from './components/BlogList'
 import Notifcation from './components/Notification'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, assignUser } from './reducers/userReducer'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Users from './components/Users'
 import IndividualUser from './components/IndividualUser'
 import { useResource } from './hooks'
-import {
-  Container,
-  Table,
-  TableCell,
-  TableRow,
-  TableBody,
-  TableContainer,
-  Paper,
-  Button,
-  TextField,
-  Alert,
-  AppBar,
-  Toolbar,
-  IconButton,
-} from '@mui/material'
+import { Container, AppBar, Button, Toolbar, Box } from '@mui/material'
 
 import {
   Routes,
@@ -63,13 +49,29 @@ const App = () => {
     if (user) {
       return (
         <div>
-          <p>
-            <Link to="/">blogs</Link> <span />
-            <Link to="/users">users</Link> <span />
-            {user.name} logged in <span />
-            <button onClick={logoutHandle}>logout</button>
-          </p>
-          <Notifcation />
+          <AppBar position="static">
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
+              <MenuButtons />
+              <Box
+                sx={{ display: { xs: 'none', sm: 'block' }, position: 'right' }}
+              >
+                <em>
+                  {user.name} logged in <span />
+                </em>
+                <Button color="inherit" onClick={logoutHandle}>
+                  logout
+                </Button>
+              </Box>
+              <Box
+                sx={{ display: { xs: 'block', sm: 'none' }, position: 'right' }}
+              >
+                <Button color="inherit" onClick={logoutHandle}>
+                  logout
+                </Button>
+              </Box>
+            </Toolbar>
+            <Notifcation />
+          </AppBar>
           <h2>blogs</h2>
         </div>
       )
@@ -78,20 +80,25 @@ const App = () => {
 
   return (
     <>
-      <NavigationBar user={user} />
-      <Routes>
-        <Route
-          path="/"
-          element={user ? <BlogList /> : <Navigate replaces to="/login" />}
-        />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:id" element={<IndividualUser user={findUser} />} />
-        <Route path="/blogs/:id" element={<BlogView blog={findBlog} />} />
-        <Route
-          path="/login"
-          element={user ? <Navigate replaces to="/" /> : <LoginPage />}
-        />
-      </Routes>
+      <Container>
+        <NavigationBar user={user} />
+        <Routes>
+          <Route
+            path="/"
+            element={user ? <BlogList /> : <Navigate replaces to="/login" />}
+          />
+          <Route path="/users" element={<Users />} />
+          <Route
+            path="/users/:id"
+            element={<IndividualUser user={findUser} />}
+          />
+          <Route path="/blogs/:id" element={<BlogView blog={findBlog} />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate replaces to="/" /> : <LoginPage />}
+          />
+        </Routes>
+      </Container>
     </>
   )
 }
@@ -104,4 +111,15 @@ const LoginPage = () => (
     <Notifcation />
     <LoginForm />
   </div>
+)
+
+const MenuButtons = () => (
+  <Box>
+    <Button color="inherit" component={Link} to="/">
+      blogs
+    </Button>
+    <Button color="inherit" component={Link} to="/users">
+      users
+    </Button>
+  </Box>
 )

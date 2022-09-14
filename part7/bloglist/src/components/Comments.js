@@ -1,6 +1,7 @@
 import { useField } from '../hooks'
 import { useDispatch } from 'react-redux'
 import { addComment } from '../reducers/blogsReducer'
+import { Button } from '@mui/material'
 
 const Comments = ({ blog }) => {
   const dispatch = useDispatch()
@@ -23,7 +24,9 @@ const Comments = ({ blog }) => {
       <form onSubmit={createComment}>
         <div>
           <input id="Comment" {...content} />
-          <button type="submit">submit</button>
+          <Button variant="contained" type="submit">
+            submit
+          </Button>
         </div>
       </form>
       <ul>

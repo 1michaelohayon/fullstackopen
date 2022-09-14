@@ -6,7 +6,7 @@ import Togglable from './Toggleable'
 import BlogForm from './BlogForm'
 import { useEffect } from 'react'
 import { initializeBlogs } from '../reducers/blogsReducer'
-
+import { Paper, Button, Box, List } from '@mui/material'
 const BlogList = () => {
   const blogs = useSelector((state) => state.blogs)
 
@@ -21,9 +21,13 @@ const BlogList = () => {
       <Togglable buttonLabel="create new blog">
         <BlogForm />
       </Togglable>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <Box component={Paper}>
+        <List>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </List>
+      </Box>
     </div>
   )
 }
@@ -42,16 +46,22 @@ export const BlogView = ({ blog }) => {
   }
   return (
     <div>
-      <h2>
-        {blog.title} {blog.author}
-      </h2>
-      <a href={blog.url}>{blog.url}</a>
-      <div>
-        {blog.likes} likes <button onClick={likeBtn}>like</button> <br />
-        added by {blog.user.name}
-      </div>
-      <h3>comments</h3>
-      <Comments blog={blog} />
+      <Paper>
+        <h2>
+          {blog.title} {blog.author}
+        </h2>
+        <a href={blog.url}>{blog.url}</a>
+        <div>
+          {blog.likes} likes{' '}
+          <Button variant="contained" onClick={likeBtn}>
+            like
+          </Button>{' '}
+          <br />
+          added by {blog.user.name}
+        </div>
+        <h3>comments</h3>
+        <Comments blog={blog} />
+      </Paper>
     </div>
   )
 }

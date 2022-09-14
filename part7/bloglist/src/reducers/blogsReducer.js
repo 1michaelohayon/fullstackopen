@@ -70,8 +70,10 @@ export const addBlog = (blogObject) => {
       )
     } catch (error) {
       console.log(error.response.statusText)
-      if (error === 'something') {
-        return dispatch(setNotification(`session timed out`, 5000, true))
+      if (error.response.statusText === 'Unauthorized') {
+        return dispatch(
+          setNotification(`Unauthorized / session timed out`, 5000, true)
+        )
       }
       dispatch(setNotification(`missing input`, 5000, true))
     }
