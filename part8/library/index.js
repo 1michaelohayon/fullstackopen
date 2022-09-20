@@ -1,4 +1,21 @@
+require('dotenv').config()
+const mongoose = require('mongoose')
+const Book = require('./modals/book')
+const Author = require('./modals/author')
 const { ApolloServer, gql } = require("apollo-server");
+
+console.log('connecting to', process.env.MONGODB_URI)
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connecting to mongoDB', error.message)
+  })
+
+
+
 
 let authors = [
   {
@@ -27,17 +44,9 @@ let authors = [
 ];
 
 /*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
  * English:
  * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
  * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
  */
 
 let books = [
@@ -102,8 +111,8 @@ const typeDefs = gql`
 
   type Book {
     title: String!
+    author: Author!
     published: Int!
-    author: String!
     id: ID!
     genres: [String]
   }
@@ -139,10 +148,10 @@ const resolvers = {
       return !args.genre && !args.author
         ? books
         : args.author && args.genre
-        ? byGenre(byAuthor(books))
-        : args.author
-        ? byAuthor(books)
-        : byGenre(books);
+          ? byGenre(byAuthor(books))
+          : args.author
+            ? byAuthor(books)
+            : byGenre(books);
     },
     allAuthors: () => authors,
   },
