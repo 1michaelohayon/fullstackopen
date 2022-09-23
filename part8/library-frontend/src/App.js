@@ -21,6 +21,11 @@ const App = () => {
 
   console.log(user)
 
+  const handleSetToken = async (token) => {
+    localStorage.setItem('library-user-token', token)
+    setToken(token)
+    await client.resetStore()
+  }
 
   const logout = () => {
     setToken(null)
@@ -49,7 +54,7 @@ const App = () => {
 
 
       <LoginForm show={page === 'login'}
-        setToken={setToken}
+        setToken={handleSetToken}
         setPage={setPage} />
 
       <Authors show={page === 'authors'} />

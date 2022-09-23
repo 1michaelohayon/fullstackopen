@@ -2,18 +2,14 @@ import { useQuery } from "@apollo/client"
 import { useState } from "react"
 import { ALL_BOOKS } from "../queries"
 
-const Books = (props) => {
+
+const BooksContent = props => {
   const [filter, setFilter] = useState(null)
   const result = useQuery(ALL_BOOKS, { variables: { genre: filter } })
-
 
   if (result.loading) {
     return <div> loading...</div>;
   }
-  if (!props.show) {
-    return null
-  }
-
 
   const books = result.data.allBooks
 
@@ -62,8 +58,15 @@ const Books = (props) => {
   )
 }
 
+const Books = (props) => {
+
+
+  if (!props.show) {
+    return null
+  }
+
+
+  return <BooksContent />
+}
+
 export default Books
-
-
-
-
