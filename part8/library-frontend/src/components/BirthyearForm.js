@@ -4,7 +4,7 @@ import { EDIT_BIRTHYEAR, ALL_AUTHORS } from "../queries"
 import Select from 'react-select';
 
 
-const BirthYearForm = () => {
+const BirthYearForm = (props) => {
   const authorsQuery = useQuery(ALL_AUTHORS)
   const [changedYear, result] = useMutation(EDIT_BIRTHYEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }]
@@ -12,6 +12,10 @@ const BirthYearForm = () => {
 
   const [selectedOption, setSelectedOption] = useState(null);
   const [setBornTo, setBorn] = useState('')
+
+  if (!props.show) {
+    return null
+  }
 
   if (authorsQuery.loading) {
     return <div> loading...</div>;
