@@ -4,7 +4,7 @@ import { ALL_BOOKS } from "../queries"
 const Recommendad = (props) => {
 
   const filter = props.user.data.me.favouriteGenre
-  const result = useQuery(ALL_BOOKS, { variables: { genre: filter } })
+  const result = useQuery(ALL_BOOKS, { variables: { genre: filter }, fetchPolicy: 'cache-and-network' })
 
   if (result.loading) {
     return <div> loading...</div>;

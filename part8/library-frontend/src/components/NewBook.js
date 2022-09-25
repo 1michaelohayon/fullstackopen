@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
-import { useMutation, useQuery } from '@apollo/client'
+import { ALL_AUTHORS, CREATE_BOOK, ALL_BOOKS } from '../queries'
+import { useMutation } from '@apollo/client'
+import { updateCache } from '../App'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -11,11 +12,14 @@ const NewBook = (props) => {
 
 
   const [createBook] = useMutation(CREATE_BOOK, {
-
+    onError: (error) => {
+      props.notify(error.graphQLErrors[0].message || "bad input")
+    },
     update: (cache, response) => {
       cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-
-        const updatedAuthor = response.data.addBook.author
+        const addedBook = response.data.addBook
+        const updatedAuthor = addedBook.author
+        updateCache(cache, { query: ALL_BOOKS, variables: { genre: null } }, addedBook)
 
         return {
           allAuthors: allAuthors.some(a => a.name === updatedAuthor.name)
@@ -24,6 +28,7 @@ const NewBook = (props) => {
         }
       })
     },
+
   })
 
 

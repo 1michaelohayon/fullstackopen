@@ -3,9 +3,15 @@ import { useState } from "react"
 import { ALL_BOOKS } from "../queries"
 
 
-const BooksContent = props => {
+
+
+const Books = props => {
   const [filter, setFilter] = useState(null)
-  const result = useQuery(ALL_BOOKS, { variables: { genre: filter } })
+  const result = useQuery(ALL_BOOKS, { variables: { genre: filter }, fetchPolicy: 'cache-and-network' })
+
+  if (!props.show) {
+    return null
+  }
 
   if (result.loading) {
     return <div> loading...</div>;
@@ -58,15 +64,6 @@ const BooksContent = props => {
   )
 }
 
-const Books = (props) => {
 
-
-  if (!props.show) {
-    return null
-  }
-
-
-  return <BooksContent />
-}
 
 export default Books
