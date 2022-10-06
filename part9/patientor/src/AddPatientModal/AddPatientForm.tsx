@@ -17,9 +17,9 @@ interface Props {
 }
 
 const genderOptions: GenderOption[] = [
+  { value: Gender.Other, label: "Other" },
   { value: Gender.Male, label: "Male" },
   { value: Gender.Female, label: "Female" },
-  { value: Gender.Other, label: "Other" },
 ];
 
 export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
@@ -47,6 +47,9 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
         }
         if (!values.occupation) {
           errors.occupation = requiredError;
+        }
+        if (values.gender === Gender.Other) {
+          errors.gender = requiredError;
         }
         return errors;
       }}

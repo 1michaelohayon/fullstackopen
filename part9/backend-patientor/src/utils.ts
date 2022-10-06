@@ -1,49 +1,5 @@
-import { Gender, NewPatientEntry } from "./types";
-
-const isString = (text: unknown): text is string => {
-  return typeof text === 'string' || text instanceof String;
-};
-
-const parseName = (name: unknown): string => {
-  if (!name || !isString(name)) {
-    throw new Error('Incorrect or missing name');
-  }
-  return name;
-};
-
-const parseDateOfBirth = (dateOfBirth: unknown): string => {
-  if (!dateOfBirth || !isString(dateOfBirth)) {
-    throw new Error('Incorrect or missing date of birth');
-  }
-  return dateOfBirth;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const isGender = (param: any): param is Gender => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  return Object.values(Gender).includes(param);
-};
-
-const parseGender = (gender: unknown): Gender => {
-  if (!gender || !isGender(gender)) {
-    throw new Error('Incorrect or missing gender');
-  }
-  return gender;
-};
-
-const parseSsn = (ssn: unknown): string => {
-  if (!ssn || !isString(ssn)) {
-    throw new Error('Incorrect or missing ssn');
-  }
-  return ssn;
-};
-
-const parseOccupation = (occupation: unknown): string => {
-  if (!occupation || !isString(occupation)) {
-    throw new Error('Incorrect or missing occupation');
-  }
-  return occupation;
-};
+import { NewPatient, NewEntry, BaseEntry, OccupationalHealthcareEntry, HealthCheckEntry, HospitalEntry } from "./types";
+import parse from "./parse";
 
 
 type Fields = {
@@ -51,18 +7,78 @@ type Fields = {
   dateOfBirth: unknown,
   ssn: unknown,
   gender: unknown,
-  occupation: unknown
+  occupation: unknown,
+  entries: unknown,
+  nonExist: unknown
 };
 
-const toNewPatientEntry = (body: Fields): NewPatientEntry => {
-  const newEntry: NewPatientEntry = {
-    name: parseName(body.name),
-    dateOfBirth: parseDateOfBirth(body.dateOfBirth),
-    ssn: parseSsn(body.ssn),
-    gender: parseGender(body.gender),
-    occupation: parseOccupation(body.occupation)
+const toNewPatient = (body: Fields): NewPatient => {
+  const newEntry: NewPatient = {
+    name: parse.name(body.name),
+    dateOfBirth: parse.dateOfBirth(body.dateOfBirth),
+    ssn: parse.ssn(body.ssn),
+    gender: parse.gender(body.gender),
+    occupation: parse.occupation(body.occupation),
+    entries: []
   };
   return newEntry;
 };
 
-export default toNewPatientEntry;
+export default toNewPatient;
+
+
+
+type EntryFields = {
+  date: unknown,
+  specialist: unknown,
+  description: unknown,
+  type: unknown,
+  employerName?: unknown,
+  healthCheckRating?: unknown,
+  discharge?: unknown,
+  diagnosisCodes?: unknown;
+  sickLeave?: unknown;
+};
+
+
+export const toNewEntry = (body: EntryFields): NewEntry => {
+  const validBaseEntry: Omit<BaseEntry, 'id'> = {
+    date: parse.date(body.date),
+    specialist: parse.specialist(body.specialist),
+    description: parse.description(body.description),
+    diagnosisCodes: parse.diagnosesCodes(body.diagnosisCodes)
+  };
+
+
+  if (body.type === "OccupationalHealthcare") {
+    const validOccupationalHealthcare: Omit<OccupationalHealthcareEntry, 'id'> = {
+      ...validBaseEntry,
+      type: "OccupationalHealthcare",
+      sickLeave: parse.sickLeave(body.sickLeave),
+      employerName: parse.employerName(body.employerName),
+    };
+
+    return validOccupationalHealthcare;
+  } else if (body.type === "HealthCheck") {
+    const validHealthCheck: Omit<HealthCheckEntry, 'id'> = {
+      ...validBaseEntry,
+      type: "HealthCheck",
+      healthCheckRating: parse.healthCheckRating(body.healthCheckRating)
+    };
+
+    return validHealthCheck;
+  } else if (body.type === "Hospital") {
+
+    const validHospital: Omit<HospitalEntry, 'id'> = {
+      ...validBaseEntry,
+      type: 'Hospital',
+      discharge: parse.discharge(body.discharge)
+    };
+
+
+    return validHospital;
+  } else {
+    throw new Error(`Incorrect or missing type ${body.type}`);
+  }
+
+};

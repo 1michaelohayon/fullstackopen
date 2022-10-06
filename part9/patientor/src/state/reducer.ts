@@ -1,15 +1,25 @@
 import { State } from "./state";
-import { Patient } from "../types";
+import { Patient, Diagnoses } from "../types";
+
 
 export type Action =
   | {
-      type: "SET_PATIENT_LIST";
-      payload: Patient[];
-    }
+    type: "SET_PATIENT_LIST";
+    payload: Patient[];
+  }
   | {
-      type: "ADD_PATIENT";
-      payload: Patient;
-    };
+    type: "ADD_PATIENT";
+    payload: Patient;
+  }
+  | {
+    type: "EXPAND_PATIENT";
+    payload: Patient;
+  }
+  | {
+    type: 'SET_DIAGNOSES';
+    payload: Diagnoses[];
+  };
+  
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -32,7 +42,42 @@ export const reducer = (state: State, action: Action): State => {
           [action.payload.id]: action.payload
         }
       };
-    default:
-      return state;
+    case "EXPAND_PATIENT":
+      console.log('action payload', action.payload);
+      console.log('state', state.expendedPatients);
+
+      return {
+        ...state,
+        expendedPatients: {
+          [action.payload.id]: action.payload
+        }
+      };
+    case "SET_DIAGNOSES":
+      return {
+        ...state,
+        diagnoses: {
+          ...action.payload.reduce(
+            (memo, diagnoses) => ({ ...memo, [diagnoses.code]: diagnoses }),
+            {}
+          ),
+          ...state.diagnoses
+        }
+      };
+
   }
 };
+
+
+
+export const setPatientList = (patientListFromApi: Patient[]): Action => {
+  return { type: "SET_PATIENT_LIST", payload: patientListFromApi };
+};
+
+export const setDiagnoses = (diagnosesListFromApi: Diagnoses[]): Action => {
+  return { type: "SET_DIAGNOSES", payload: diagnosesListFromApi };
+};
+
+export const setExpandedPatient = (patient: Patient ): Action => {
+  return { type: "EXPAND_PATIENT", payload: patient };
+};
+
