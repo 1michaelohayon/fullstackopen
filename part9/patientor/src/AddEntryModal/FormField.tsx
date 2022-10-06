@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
+import { ErrorMessage, Field, FieldProps, FormikProps, useField } from "formik";
 import {
   Select,
   FormControl,
@@ -103,20 +103,22 @@ export const NumberField = ({ field, label, min, max }: NumberProps) => {
 };
 
 export const DiagnosisSelection = ({
-  diagnoses,
-  setFieldValue,
-  setFieldTouched,
+  diagnoses
 }: {
   diagnoses: Diagnosis[];
   setFieldValue: FormikProps<{ diagnosisCodes: string[] }>["setFieldValue"];
   setFieldTouched: FormikProps<{ diagnosisCodes: string[] }>["setFieldTouched"];
 }) => {
-  const [selectedDiagnoses, setDiagnoses] = useState<string[]>([]);
-  const field = "diagnosisCodes";
+  const [field , meta, helpeprs] = useField('diagnosis');
   const onChange = (data: string[]) => {    
-    setDiagnoses([...data]);
-    setFieldTouched(field, true);
-    setFieldValue(field, selectedDiagnoses);
+console.log('Meta===', meta);
+console.log('data===', data);
+console.log('field===', field);
+console.log('helpers===', helpeprs);
+
+
+  helpeprs.setValue(data);
+  helpeprs.setTouched(true);
   };
 
   const stateOptions = diagnoses.map((diagnosis) => ({
@@ -128,14 +130,14 @@ export const DiagnosisSelection = ({
   return (
     <FormControl style={{ width: 552, marginBottom: '30px' }}>
       <InputLabel>Diagnoses</InputLabel>
-      <Select multiple value={selectedDiagnoses} onChange={(e) => onChange(e.target.value as string[])} input={<Input />}>
+      <Select multiple value={meta.value as string} onChange={(e) => onChange(e.target.value as string[])} input={<Input />}>
         {stateOptions.map((option) => (
           <MenuItem key={option.key} value={option.value}>
             {option.text}
           </MenuItem>
         ))}
       </Select>
-      <ErrorMessage name={field} />
+      <ErrorMessage name={String(field)} />
     </FormControl>
   );
 };
