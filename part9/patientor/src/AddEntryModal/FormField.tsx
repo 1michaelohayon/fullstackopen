@@ -109,12 +109,11 @@ export const DiagnosisSelection = ({
   setFieldValue: FormikProps<{ diagnosisCodes: string[] }>["setFieldValue"];
   setFieldTouched: FormikProps<{ diagnosisCodes: string[] }>["setFieldTouched"];
 }) => {
-  const [field , meta, helpeprs] = useField('diagnosis');
+  const [field , meta, helpeprs] = useField('diagnosisCodes');
   const onChange = (data: string[]) => {    
-console.log('Meta===', meta);
+
 console.log('data===', data);
-console.log('field===', field);
-console.log('helpers===', helpeprs);
+
 
 
   helpeprs.setValue(data);

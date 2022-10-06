@@ -13,7 +13,7 @@ export type EntryFormValues = {
   type: "OccupationalHealthcare" | "Hospital" | "HealthCheck"
   date: string
   specialist: string
-  diagnosis?: string[]
+  diagnosisCodes?: string[]
   description: string
   employerName?: string
   sickLeave: { startDate: string, endDate: string }
@@ -49,7 +49,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         date: "",
         type: "OccupationalHealthcare",
         specialist: "",
-        diagnosis: [],
+        diagnosisCodes: [],
         employerName: "",
         description: "",
         sickLeave: { startDate: "", endDate: "" },
