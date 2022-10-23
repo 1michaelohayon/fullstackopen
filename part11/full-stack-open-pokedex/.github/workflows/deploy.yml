@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  build:
+    if: ${{ !contains(join(github.event.commits.*.message), '#skip') && github.event_name == 'push'}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "serene-escarpment-63358"
+          heroku_email: "1michaelohayon@gmail.com"
+          healthcheck: "https://serene-escarpment-63358.herokuapp.com/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: Test Succeeded!
+          text: A new version of Pokedex deployed by 1michaelohayon.
+          description:  to https://serene-escarpment-63358.herokuapp.com/
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          details: 'commit to https://github.com/1michaelohayon/full-stack-open-pokedex you broke the build :('
+          text: build failed :S.
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}

@@ -1,0 +1,33 @@
+1.Some common steps in a CI setup include linting, testing, and building. What are the specific tools for taking care of these steps in the ecosystem of the language you picked? 
+	While using Javascript or Typescript, 
+	for linting I can use eslint, 
+	for testing Jest and cypress,
+	and Webpack for the build.
+
+
+2.What alternatives are there to set up the CI besides Jenkins and GitHub Actions?  
+	Other alternatives to setup CI besides Jenkins and GitHub Actions: 
+	Jenkins.
+	TeamCity.
+	Bamboo.
+	Buddy.
+	GitLab CI.
+	CircleCI.
+	TravisCI
+
+
+3.Would this setup be better in a self-hosted or a cloud-based environment? Why? What information would you need to make that decision?
+	Depends on the size of the project, for big projects
+	It's better to use self-hosted enviorement because you're not limited by the cloud's hardware,
+	the entire setup is unde your control, the billing is baed on the server, what you do on the server doesn't change the billing,
+	
+	The pros of using cloud-based enviorement are no risks of hardware failrue, 
+	you have a small to medium software project that doesn't have any special requirements 
+	(e.g. a need for a graphics card to run tests), a cloud-based solution is probably best.
+	The configuration is simple and you don't need to go to the hassle or expense of setting up your own system
+	In a cloud-hosted setup, the setup of the environment is not something you need to worry about
+	however there is a limition by the hardware for GitHub Actions, the nodes your builds will run on have 2 vCPUs and 8GB of RAM.
+	Cloud-based options are also usually billed by build time which is something to consider.
+	
+
+	

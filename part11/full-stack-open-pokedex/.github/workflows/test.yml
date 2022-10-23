@@ -1,0 +1,34 @@
+name: Testing stuff
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  parse_commit_messages:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: commits
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
+      - name: commit messages
+        env:
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: echo "$COMMIT_MESSAGES"
+      - name: contains '#skip'
+        env:
+          NOT_CONTAINING_SKIP: ${{ !contains(join(github.event.commits.*.message), '#skip') }}
+        run: echo "$CONTAINS_SKIP" #returns true if commit messages doesn't include #skip
+
+
+
