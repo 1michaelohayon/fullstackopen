@@ -1,0 +1,46 @@
+const { Model, DataTypes } = require('sequelize')
+const { sequelize } = require('../util/db')
+
+
+class Blog extends Model { }
+
+Blog.init({
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  author: {
+    type: DataTypes.TEXT
+  },
+  url: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  likes: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+  },
+  yearWritten: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    validate: {
+      isAfter: "1990",
+      
+      isBefore: (new Date().getFullYear() + 1).toString()
+    }
+  }
+},
+  {
+    sequelize,
+    underscored: true,
+    timestamps: true,
+    modelName: 'blog'
+});
+
+module.exports = Blog
