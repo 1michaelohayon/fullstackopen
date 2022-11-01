@@ -1,4 +1,4 @@
-### Course
+### Course parts:
 0. Fundamentals of Web apps
 1. Introduction to React
 2. Communicating with server
